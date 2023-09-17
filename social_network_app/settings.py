@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
 
     'social_network_app',
+    'network',
 ]
 
 MIDDLEWARE = [
@@ -110,7 +111,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-AUTH_USER_MODEL = "social_network_app.UserModel"
+AUTH_USER_MODEL = "network.UserModel"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/

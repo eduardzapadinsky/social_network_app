@@ -16,8 +16,14 @@ Including another URLconf
 """
 
 from django.urls import path, include
+from rest_framework import routers
+
+from network.views import UserCreateView
+
+# router = routers.DefaultRouter()
+# router.register("network", UserCreateView)
 
 urlpatterns = [
-    path("", include("network.urls", namespace="network")),
+    path("app/", include("network.urls", namespace="network")),
 ]
 
