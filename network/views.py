@@ -1,5 +1,10 @@
-from rest_framework import generics
+from django.db.models import Count
+from django.db.models.functions import TruncDate
+from django.http import JsonResponse
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenViewBase
 
 from .models import UserModel, Post
@@ -24,45 +29,59 @@ class PostCreateView(generics.CreateAPIView):
     # Override perform_create to set the post owner.
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+
 #
 #
-# class PostLikeView(generics.UpdateAPIView):
-#     queryset = Post.objects.all()
-#     serializer_class = PostSerializer
-#
-#     def update(self, request, *args, **kwargs):
-#         post = self.get_object()
-#         user = request.user
-#
-#         if user in post.likes.all():
-#             post.likes.remove(user)
-#             return Response({'message': 'Post unliked'}, status=status.HTTP_200_OK)
-#         else:
-#             post.likes.add(user)
-#             return Response({'message': 'Post liked'}, status=status.HTTP_200_OK)
-#
-#
-# class AnalyticsView(generics.ListAPIView):
-#     serializer_class = PostSerializer
-#
-#     def get_queryset(self):
-#         date_from = self.request.query_params.get('date_from', None)
-#         date_to = self.request.query_params.get('date_to', None)
-#
-#         queryset = Post.objects.annotate(like_count=Count('likes')).filter(
-#             created_at__range=[date_from, date_to]
-#         )
-#
-#         return queryset
-#
-#     def list(self, request, *args, **kwargs):
-#         queryset = self.get_queryset()
-#         data = {
-#             'total_likes': queryset.aggregate(total_likes=Count('likes'))['total_likes'],
-#             'analytics': [{
-#                 'date': post.created_at.date(),
-#                 'like_count': post.like_count
-#             } for post in queryset]
-#         }
-#
-#         return Response(data)
+class PostLikeView(generics.UpdateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+    def update(self, request, *args, **kwargs):
+        post = self.get_object()
+        user = request.user
+
+        # Check if the user has already liked the post
+        if user in post.likes.all():
+            return Response({'message': 'You have already liked this post'}, status=status.HTTP_400_BAD_REQUEST)
+
+        post.likes.add(user)
+        return Response({'message': 'Post liked'}, status=status.HTTP_200_OK)
+
+
+class PostUnlikeView(generics.UpdateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+    def update(self, request, *args, **kwargs):
+        post = self.get_object()
+        user = request.user
+        if user in post.likes.all():
+            post.likes.remove(user)
+            return Response({'message': 'Post unliked'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'User has not liked this post'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AnalyticsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        date_from = request.GET.get('date_from')
+        date_to = request.GET.get('date_to')
+
+        likes_analytics = (
+            Post.objects
+            .filter(likes__isnull=False, created_at__gte=date_from, created_at__lte=date_to)
+            .annotate(date=TruncDate('created_at'))
+            .values('date')
+            .annotate(likes_count=Count('likes'))
+            .order_by('date')
+        )
+
+        analytics_data = [
+            {'date': item['date'], 'likes_count': item['likes_count']}
+            for item in likes_analytics
+        ]
+
+        return JsonResponse({'analytics': analytics_data})
