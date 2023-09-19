@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.utils import timezone
 
 
 class UserModel(AbstractUser):
@@ -8,8 +7,6 @@ class UserModel(AbstractUser):
     toDo
     """
     created_at = models.DateTimeField(auto_now_add=True)
-    last_time_login = models.DateTimeField(default=timezone.now)
-    last_time_request = models.DateTimeField(default=timezone.now)
 
 
 class Post(models.Model):
