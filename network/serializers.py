@@ -3,7 +3,8 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.utils.timezone import now
 from django.contrib.auth.hashers import make_password
 
-from .models import UserModel, Post
+
+from .models import UserModel, Post, UserRequest
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -14,12 +15,6 @@ class UserSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def validate_password(value: str) -> str:
-        """
-        Hash value passed by user.
-
-        :param value: password of a user
-        :return: a hashed version of the password
-        """
         return make_password(value)
 
 

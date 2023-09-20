@@ -6,8 +6,9 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenViewBase
+from django.shortcuts import get_object_or_404
 
-from .models import UserModel, Post
+from .models import UserModel, Post, UserRequest
 from .serializers import UserSerializer, TokenSerializer, PostSerializer
 
 
@@ -31,8 +32,6 @@ class PostCreateView(generics.CreateAPIView):
         serializer.save(owner=self.request.user)
 
 
-#
-#
 class PostLikeView(generics.UpdateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
@@ -85,3 +84,25 @@ class AnalyticsView(APIView):
         ]
 
         return JsonResponse({'analytics': analytics_data})
+
+
+def get_user_activity_view(request, user_id):
+    try:
+        user_request_log = get_object_or_404(UserRequest, user_id=user_id)
+        user = get_object_or_404(UserModel, id=user_id)
+
+        response_data = {
+            'last_login': user.last_login.strftime('%Y-%m-%d %H:%M:%S') if user.last_login else None,
+            'last_request_timestamp': user_request_log.timestamp,
+        }
+
+        return JsonResponse(response_data)
+    except UserRequest.DoesNotExist:
+        # Handle the case where there is no request log for the user
+        return JsonResponse({'error': 'No request log found for this user.'}, status=404)
+    except UserModel.DoesNotExist:
+        # Handle the case where there is no user with the given user_id
+        return JsonResponse({'error': 'User not found.'}, status=404)
+    except Exception as e:
+        # Handle any other unexpected exceptions
+        return JsonResponse({'error': str(e)}, status=500)
