@@ -1,10 +1,9 @@
-from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.utils.timezone import now
 from django.contrib.auth.hashers import make_password
+from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-
-from .models import UserModel, Post, UserRequest
+from .models import UserModel, Post
 
 
 class UserSerializer(serializers.ModelSerializer):
