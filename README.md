@@ -79,5 +79,3 @@ You can access the main functionality of the app through the following URLs:
 ## Testing with the Bot
 
 You can use the provided bot for testing the app. Follow the instructions in the [demo_for_social_network_app](https://github.com/eduardzapadinsky/demo_for_social_network_app) repository to set up and run the bot.
-```
-
