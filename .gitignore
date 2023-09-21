@@ -1,0 +1,41 @@
+# Ignore Python bytecode files
+__pycache__/
+*.pyc
+
+# Ignore database files
+db.sqlite3
+
+# Ignore virtual environment
+venv/
+
+# Ignore secret key file
+secret_key.txt
+
+# Ignore environment-specific settings
+.env
+
+# Ignore IDE-specific files and directories
+.idea/
+.vscode/
+
+# Ignore local development settings
+local_settings.py
+
+# Ignore migration files (you can also use `python manage.py makemigrations --dry-run` to detect them)
+/migrations/
+/__pycache__/
+
+# Ignore log files
+*.log
+
+# Ignore media and static files (not recommended for production, just for development)
+/media/
+/static/
+
+# Ignore generated test data
+testdata.json
+
+# Ignore any sensitive or private information
+config.ini
+
+# Ignore any other project-specific files or directories

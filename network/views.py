@@ -27,9 +27,9 @@ class PostCreateView(generics.CreateAPIView):
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
 
-    # Override perform_create to set the post owner.
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        owner = self.request.user
+        serializer.save(owner=owner)
 
 
 class PostLikeView(generics.UpdateAPIView):
