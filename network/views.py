@@ -13,30 +13,54 @@ from .serializers import UserSerializer, TokenSerializer, PostSerializer
 
 
 class UserCreateView(generics.CreateAPIView):
+    """
+    This view allows users to register by providing a username and password.
+    """
+
     permission_classes = [AllowAny]
     queryset = UserModel.objects.all()
     serializer_class = UserSerializer
 
 
 class LoginView(TokenViewBase):
+    """
+    This view allows users to obtain authentication tokens by providing valid credentials.
+    """
+
     serializer_class = TokenSerializer
 
 
 class PostCreateView(generics.CreateAPIView):
+    """
+    This view allows authenticated users to create posts.
+    """
+
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
+        """
+        Create a new post and set the owner
+        """
+
         owner = self.request.user
         serializer.save(owner=owner)
 
 
 class PostLikeView(generics.UpdateAPIView):
+    """
+    This view allows authenticated users to like a post.
+    """
+
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
     def update(self, request, *args, **kwargs):
+        """
+        Like a post and return a response.
+        """
+
         post = self.get_object()
         user = request.user
 
@@ -49,10 +73,18 @@ class PostLikeView(generics.UpdateAPIView):
 
 
 class PostUnlikeView(generics.UpdateAPIView):
+    """
+    This view allows authenticated users to unlike a post.
+    """
+
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
     def update(self, request, *args, **kwargs):
+        """
+        Unlike a post and return a response.
+        """
+
         post = self.get_object()
         user = request.user
         if user in post.likes.all():
@@ -63,6 +95,11 @@ class PostUnlikeView(generics.UpdateAPIView):
 
 
 class AnalyticsView(APIView):
+    """
+    This view allows authenticated users to retrieve post analytics data
+    aggregated by day within a specified date range.
+    """
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -87,6 +124,11 @@ class AnalyticsView(APIView):
 
 
 def get_user_activity_view(request, user_id):
+    """
+    This view allows users to retrieve activity data for a specific user,
+    including their last login timestamp and the timestamp of their last request.
+    """
+
     try:
         user_request_log = get_object_or_404(UserRequest, user_id=user_id)
         user = get_object_or_404(UserModel, id=user_id)

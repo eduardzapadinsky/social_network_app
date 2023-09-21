@@ -4,6 +4,12 @@ from .models import UserRequest
 
 
 class RequestTrackingMiddleware:
+    """
+    Middleware for tracking user requests and updating the UserRequest model.
+    This middleware is responsible for logging user requests and updating the UserRequest model
+    with the timestamp of the latest request.
+    """
+
     def __init__(self, get_response):
         self.get_response = get_response
 
