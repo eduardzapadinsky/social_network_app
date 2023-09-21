@@ -1,6 +1,10 @@
 # Social Network App
 
-This is a sample social network app built with Django and Django REST framework.
+Welcome to the Social Network App, a sample social networking platform built with Django and Django REST framework.
+
+## Description
+
+This app provides a basic social networking experience where users can sign up, create posts, like and dislike posts, and view analytics about post likes. It includes features like user authentication, user activity tracking, and more.
 
 ## Installation
 
@@ -34,23 +38,21 @@ pip install -r requirements.txt
 
 Edit the `settings.py` file to configure your database settings. By default, the app is configured to use SQLite.
 
-### 5. Migrate the Database
+### 5. Create Migrations
 
-Run the database migrations to create the necessary database tables:
+Run the following command to create database migrations:
+
+```bash
+python manage.py makemigrations
+```
+
+### 6. Apply Migrations
+
+Apply the database migrations to create the necessary database tables:
 
 ```bash
 python manage.py migrate
 ```
-
-### 6. Create a Superuser (Admin)
-
-You can create a superuser (admin) account to manage the app:
-
-```bash
-python manage.py createsuperuser
-```
-
-Follow the prompts to set up the admin account.
 
 ### 7. Run the Development Server
 
@@ -72,9 +74,10 @@ You can access the main functionality of the app through the following URLs:
 - Like a Post: `http://127.0.0.1:8000/api/post/<int:pk>/like/`
 - Dislike a Post: `http://127.0.0.1:8000/api/post/<int:pk>/dislike/`
 - Get User Activity: `http://127.0.0.1:8000/api/users/<int:user_id>/get_activity/`
-- Analytics: `http://127.0.0.1:8000/api/analytics/`
+- Analytics: `http://127.0.0.1:8000/api/analytics/?date_from=____-__-__&date_to=____-__-__`
 
 ## Testing with the Bot
 
 You can use the provided bot for testing the app. Follow the instructions in the [demo_for_social_network_app](https://github.com/eduardzapadinsky/demo_for_social_network_app) repository to set up and run the bot.
+```
 
